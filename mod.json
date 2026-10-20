@@ -1,0 +1,28 @@
+{
+    "geode": "5.11.2",
+    "gd": {
+        "win": "2.2091",
+        "android": "2.2091"
+    },
+    "id": "vuthinh.level-shaders-fix-port",
+    "name": "Level Shaders Fix (Experimental Port)",
+    "version": "v0.1.0-alpha.1",
+    "developer": "Vu Thinh",
+    "description": "Experimental GD 2.209/2.2091 adaptation of ConfiG's native-resolution shader fix.",
+    "tags": [
+        "offline",
+        "bugfix",
+        "performance"
+    ],
+    "incompatibilities": {
+        "cgytrus.level-shaders-fix": {
+            "version": "*",
+            "breaking": true
+        }
+    },
+    "resources": {
+        "files": [
+            "resources/shaders/*.glsl"
+        ]
+    }
+}

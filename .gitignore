@@ -1,0 +1,8 @@
+/build/
+/.staging/
+/output/
+/geode-sdk-clone/
+/bindings-repo/
+/cpm-cache/
+*.geode
+*.pdb

@@ -1,0 +1,29 @@
+{
+  "reviewed_at": "2026-10-20",
+  "upstream": {
+    "repository": "https://github.com/cgytrus/LevelShadersFix",
+    "commit": "c481320e0e3e6e6d21e107365d228eb90cc6d92a",
+    "version": "v1.0.3"
+  },
+  "sdk": {
+    "repository": "https://github.com/geode-sdk/geode",
+    "tag": "v5.11.2",
+    "commit": "3909856e8714b503945d5cea12ba1bddf5d5b1b0"
+  },
+  "bindings": {
+    "repository": "https://github.com/geode-sdk/bindings",
+    "commit": "587989d2b95d8f0e943e73b5a8fee352ab2ac3c4",
+    "profiles": [
+      "2.2081",
+      "2.209",
+      "2.2091"
+    ]
+  },
+  "verification": {
+    "source_audit": "passed: 109 field names and 3 Windows hook addresses present in each of 2.209 and 2.2091; not an ABI or compilation check",
+    "cpp_compilation": "2.2081 CMake configuration attempted on 2026-10-20; failed: No CMAKE_CXX_COMPILER could be found; no compilation or linking occurred",
+    "runtime_windows": "not run",
+    "runtime_android32": "not run",
+    "runtime_android64": "not run"
+  }
+}

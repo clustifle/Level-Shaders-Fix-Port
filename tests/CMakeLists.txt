@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.25)
+project(RenderMathTests LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+enable_testing()
+add_executable(render_math render_math.cpp)
+add_test(NAME render_math COMMAND render_math)

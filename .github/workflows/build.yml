@@ -1,0 +1,45 @@
+name: Experimental port builds
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  math:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cmake -S tests -B build-tests -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build-tests
+      - run: ctest --test-dir build-tests --output-on-failure
+  build:
+    needs: math
+    strategy:
+      fail-fast: false
+      matrix:
+        gd: ['2.2081', '2.209', '2.2091']
+        target: [Win64, Android32, Android64]
+    runs-on: ${{ matrix.target == 'Win64' && 'windows-latest' || 'ubuntu-latest' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node tools/check-source.mjs
+      - run: node tools/stage.mjs ${{ matrix.gd }}
+      - uses: geode-sdk/build-geode-mod@main
+        id: build
+        with:
+          sdk: '5.11.2'
+          target: ${{ matrix.target }}
+          path: .staging/${{ matrix.gd }}
+          bindings-ref: '587989d2b95d8f0e943e73b5a8fee352ab2ac3c4'
+          configure-args: >-
+            -DLSF_TARGET_GD=${{ matrix.gd }}
+            -DLSF_ACKNOWLEDGE_EXPERIMENTAL=ON
+      - uses: actions/upload-artifact@v4
+        with:
+          name: experimental-gd-${{ matrix.gd }}-${{ matrix.target }}
+          path: ${{ steps.build.outputs.build-output }}/*.geode
+          if-no-files-found: error
