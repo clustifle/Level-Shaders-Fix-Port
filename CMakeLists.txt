@@ -18,6 +18,16 @@ if(NOT DEFINED ENV{GEODE_SDK} OR NOT EXISTS "$ENV{GEODE_SDK}/CMakeLists.txt")
 endif()
 # This selects generated layouts and addresses, not just mod metadata.
 set(GEODE_GD_VERSION "${LSF_TARGET_GD}" CACHE INTERNAL "Geode GD Version" FORCE)
+# SDK 5.11.2 initializes both version values inside the same default-only block.
+# An explicit GD profile must supply the integer used by SDK/binding #if guards.
+if(LSF_TARGET_GD STREQUAL "2.2081")
+    set(LSF_COMPARABLE_GD 22081)
+elseif(LSF_TARGET_GD STREQUAL "2.209")
+    set(LSF_COMPARABLE_GD 22090)
+else()
+    set(LSF_COMPARABLE_GD 22091)
+endif()
+set(GEODE_COMP_GD_VERSION "${LSF_COMPARABLE_GD}" CACHE INTERNAL "Geode Comparable GD Version" FORCE)
 set(GEODE_DONT_INSTALL_MODS ON CACHE BOOL "Do not auto-install development builds" FORCE)
 add_library(${PROJECT_NAME} SHARED src/main.cpp)
 target_compile_definitions(${PROJECT_NAME} PRIVATE LSF_TARGET_GD="${LSF_TARGET_GD}")
