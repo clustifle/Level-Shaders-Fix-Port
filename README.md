@@ -5,8 +5,7 @@ Uses native-resolution shader rendering with the original shader resources.
 
 ## Build status
 
-- **GD 2.2081 / Geode 5.11.2:** Android 32-bit and 64-bit builds have passed.
-  Windows x64 build is being checked.
+- **GD 2.2081 / Geode 5.11.2:** Windows x64 and Android 32-bit/64-bit builds have passed.
 - **GD 2.209 / 2.2091:** source profiles only. Builds against SDK 5.11.2 are blocked:
   the bindings require CCTouchClipper/CCKeyboardActionManager headers and newer
   virtual interfaces absent from that SDK. No working package for these versions
