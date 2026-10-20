@@ -5,10 +5,10 @@
         "android": "2.2081"
     },
     "id": "vuthinh.level-shaders-fix-port",
-    "name": "Level Shaders Fix (Experimental Port)",
-    "version": "v0.1.0-alpha.1",
+    "name": "Level Shaders Fix (Recovery)",
+    "version": "v0.1.0-alpha.2",
     "developer": "Vu Thinh",
-    "description": "Experimental GD 2.209/2.2091 adaptation of ConfiG's native-resolution shader fix.",
+    "description": "Recovery rollback: retains native shader rendering and removes the faulty alpha.1 renderer.",
     "tags": [
         "offline",
         "bugfix",
@@ -19,10 +19,5 @@
             "version": "*",
             "breaking": true
         }
-    },
-    "resources": {
-        "files": [
-            "resources/shaders/*.glsl"
-        ]
     }
 }

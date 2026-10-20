@@ -20,11 +20,11 @@
     ]
   },
   "verification": {
-    "source_audit": "passed for 2.2081, 2.209 and 2.2091",
-    "cpp_compilation": "passed: GD 2.2081 Win64, Android32, Android64 in GitHub Actions 39372958420 at source commit 4168e19d077a4da76d5f3e6a838bac407090a191. GD 2.209/2.2091 blocked by incompatible SDK 5.11.2 Cocos interfaces.",
-    "runtime_windows": "not run",
-    "runtime_android32": "not run",
-    "runtime_android64": "not run",
+    "source_audit": "alpha.2 checks require absence of all custom render hooks",
+    "cpp_compilation": "alpha.2 recovery compilation pending",
+    "runtime_windows": "alpha.1 failed user runtime test: cropped rendering and large FPS drop. Alpha.2 recovery retest pending.",
+    "runtime_android32": "alpha.1 runtime not verified; alpha.2 recovery retest pending",
+    "runtime_android64": "alpha.1 runtime not verified; alpha.2 recovery retest pending",
     "cpp_math_tests": "passed in GitHub Actions",
     "package_audit": "all three 2.2081 artifacts: native architecture, manifest, GLSL contents and archive CRCs passed"
   }

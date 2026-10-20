@@ -1,7 +1,5 @@
-# Level Shaders Fix — experimental port
-Adaptation of [ConfiG's Level Shaders Fix](https://github.com/cgytrus/LevelShadersFix).
-Uses a rectangular native-resolution render target and the upstream shader UV remap.
+# Level Shaders Fix — recovery alpha.2
 
-Development source for GD 2.209 and 2.2091, Windows x64 and Android.
-GD 2.2081 builds have passed on GitHub Actions. This version has not been tested in-game. Later game updates require
-binding review and a separate build. Do not install alongside the original mod.
+Retains native GD 2.2081 shader rendering. No render hooks are installed.
+Replaces the faulty alpha.1 experimental renderer; this is not a new performance fix.
+See RECOVERY.md in the repository for findings and testing status.
