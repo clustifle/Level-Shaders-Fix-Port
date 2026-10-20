@@ -1,93 +1,87 @@
-# Level Shaders Fix — GD 2.209 / 2.2091 port work
+# Level Shaders Fix — experimental port
 
-20 October update: an additional experimental **2.2081** profile is available.
-Use `./tools/build.ps1 -GameVersion 2.2081 -Target Win64` after installing
-the development prerequisites below. Its source audit passed, but the local
-CMake attempt stopped because no C++ compiler is installed. See
-BUILD_ATTEMPT_22081.md. The existing 2.209/2.2091 profiles remain available.
+Unofficial adaptation of [ConfiG's Level Shaders Fix](https://github.com/cgytrus/LevelShadersFix).
+Uses native-resolution shader rendering with the original shader resources.
 
-**Status: experimental source, not a compiled or runtime-verified mod.**
-Targets: Windows Steam x64, Android arm64-v8a and armeabi-v7a.
-Baseline: Geode SDK/loader 5.11.2. There is no installable .geode in this package.
+## Build status
 
-## Changes implemented
+- **GD 2.2081 / Geode 5.11.2:** Android 32-bit and 64-bit builds have passed.
+  Windows x64 build is being checked.
+- **GD 2.209 / 2.2091:** source profiles only. Builds against SDK 5.11.2 are blocked:
+  the bindings require CCTouchClipper/CCKeyboardActionManager headers and newer
+  virtual interfaces absent from that SDK. No working package for these versions
+  is claimed.
+- The math tests pass on GitHub Actions. **No in-game visual or performance test
+  has been completed.** A compiled artifact is an experimental test build.
 
-- Retains ConfiG's fragment and vertex shaders and native-resolution rectangular target.
-- Uses the current named objectParent/inShaderParent fields. Parent selection follows
-  the current resetTargetContainer binding's minBlendingLayer rule.
-- Moves the camera and temporary pixelation correction to the visit scope.
-  This avoids the missing Windows prepareTargetContainer address in both profiles.
-- Calls native init first and then replaces its framebuffer transactionally.
-  It does not hook setupShader, whose Windows address is absent in the reviewed 2.209 profile.
-- Keeps native initialization of newer ShaderLayer scalars instead of guessing them.
-- Validates dimensions/GPU limits and shader compilation/linking before replacing
-  live resources. Failed initial setup leaves the native renderer in place.
-- Clamps the pixelation cell divisor to at least one and restores temporary values with RAII.
-- Detects changed framebuffer/program/physical frame dimensions on visit and attempts
-  reconfiguration. If a resize allocation fails while an old custom target is valid,
-  it keeps that target; this is degraded rendering, not successful recovery.
-- Uses a distinct mod ID and blocks coexistence with the original.
-- Provides separate exact-version builds. Unknown runtime versions disable all hooks.
+[Actions builds](https://github.com/clustifle/Level-Shaders-Fix-Port/actions)
+provide per-platform artifact ZIPs. Failed matrix jobs do not invalidate the
+separate successful artifacts. The initial full matrix is recorded in
+[run 39372958420](https://github.com/clustifle/Level-Shaders-Fix-Port/actions/runs/39372958420).
 
-## Source compatibility versus loader compatibility
+## Build without installing local C++ tools
 
-Geode 5.11.2's stock SDK defaults to GD 2.2081. Simply declaring gd=2.2091
-does not change generated addresses or field layouts. This project sets
-GEODE_GD_VERSION to the selected target before adding the SDK, using the pinned
-2.209/2.2091 bindings. This is an experimental SDK override, not evidence that
-the installed loader or its linked game libraries support every target.
+Open **Actions → Experimental port builds → Run workflow**. The default profile
+is **2.2081**, built for Windows x64 and Android armeabi-v7a/arm64-v8a.
+Pushes to main also build this default profile.
 
-The 5.11.2 binary libraries and runtime exports still require a real build/load
-check against these generated bindings. On Android, exported ShaderLayer symbol
-availability must also be checked for both ABIs. On Windows, only hooks with
-known addresses are used. No addresses were guessed.
+Download the artifact matching your game version and platform. Extract its ZIP
+to obtain the .geode file. These are development artifacts, not published releases.
+Selecting a 2.209+ profile currently stops with a clear SDK compatibility error;
+a compatible SDK/loader must be reviewed before enabling those builds.
 
-Forward compatibility in Geode is not enough to make later GD versions safe.
-Each new version needs a reviewed binding profile, a separately compiled package
-and in-game testing. There is deliberately no wildcard GD support.
+## Test installation
 
-## Build prerequisites
+1. Back up saves and close Geometry Dash.
+2. Disable the original Level Shaders Fix if installed.
+3. For GD 2.2081 Windows, copy the extracted Windows .geode into that game's
+   geode/mods folder. Do not use an Android package on Windows.
+4. For Android, import the package matching your device ABI using Geode.
+5. Start the game and confirm the experimental mod is enabled.
+6. Follow TESTING.md before claiming rendering correctness or a performance gain.
 
-Install Git, Node.js 22+, CMake 3.25+, Ninja, LLVM/Clang with C++23,
-the Geode CLI and the Geode 5.11.2 SDK plus the platform development binaries.
-Windows additionally needs Visual Studio C++ build tools and Windows SDK.
-Android needs the NDK and Geode's libraries for the chosen ABI.
-Use the Geode SDK documentation for SDK installation:
-https://docs.geode-sdk.org/getting-started/sdk/
+Only install one package for this mod ID at a time. Packages are exact-version
+builds; no automatic support for future GD updates is claimed.
 
-Pin your SDK to v5.11.2. Pin a separate geode-sdk/bindings checkout to:
-587989d2b95d8f0e943e73b5a8fee352ab2ac3c4
-Point GEODE_SDK and GEODE_BINDINGS_REPO_PATH to those checkouts.
-The commit records and selected class declarations are bundled for review.
+## Implementation
 
-### Windows PowerShell
+The port retains upstream GLSL shaders, replaces the framebuffer only after
+shader compilation/linking and allocation succeed, validates dimensions and GPU
+limits, and restores temporary state with RAII. It uses current named game
+fields and guards pixelation against a zero divisor.
 
-Open a terminal with clang, Ninja and the Windows C++ toolchain available:
+Camera/pixelation correction is applied around visit() rather than hooking
+prepareTargetContainer(). The latter has no Windows address in the reviewed
+2.209/2.2091 bindings. Native init is preserved; setupShader() is not hooked.
+Framebuffer/program/frame-size changes are checked during rendering.
+
+The broader visit correction is experimental: other rendering hooks may observe
+the temporary state. Newer shader calculations, camera rotation, split screen,
+pixelation and Android context restoration need visual tests. The old oversized
+render-target regression has not been verified on these game builds. Native
+resolution can also cost more on high-resolution displays.
+
+## Local builds (optional)
+
+Install the [Geode development prerequisites](https://github.com/geode-sdk/docs/blob/main/getting-started/cpp-stuff.md),
+Geode CLI, SDK 5.11.2, platform development binaries, CMake 3.25+ and Ninja.
+Windows requires a compatible C++ compiler, MSVC libraries and Windows SDK.
+Android requires the NDK.
+
+Set GEODE_SDK and GEODE_BINDINGS_REPO_PATH to the SDK and bindings checkouts.
+The bindings commit is pinned in PROVENANCE.json. Then run:
 
 ```powershell
-./tools/build.ps1 -GameVersion 2.209 -Target Win64 -BindingsPath C:/dev/bindings
-./tools/build.ps1 -GameVersion 2.2091 -Target Win64 -BindingsPath C:/dev/bindings
+./tools/build.ps1 -GameVersion 2.2081 -Target Win64 -BindingsPath C:/dev/bindings
+./tools/build.ps1 -GameVersion 2.2081 -Target Android64 -BindingsPath C:/dev/bindings -AndroidNdk C:/Android/ndk
+./tools/build.ps1 -GameVersion 2.2081 -Target Android32 -BindingsPath C:/dev/bindings -AndroidNdk C:/Android/ndk
 ```
 
-### Android from PowerShell
+The staging script writes a profile-specific manifest. SDK configuration sets
+both GEODE_GD_VERSION and GEODE_COMP_GD_VERSION to select matching layouts.
+No game files are automatically installed by the build scripts.
 
-```powershell
-./tools/build.ps1 -GameVersion 2.2091 -Target Android64 -BindingsPath C:/dev/bindings -AndroidNdk C:/Android/ndk
-./tools/build.ps1 -GameVersion 2.2091 -Target Android32 -BindingsPath C:/dev/bindings -AndroidNdk C:/Android/ndk
-```
-
-Each command stages a version-specific manifest without modifying the source.
-No files are automatically installed into your game.
-Outputs, if compilation succeeds, are under build/<GD>/<Target>/.
-
-For Android on Linux, stage using node tools/stage.mjs 2.2091, then configure
-the staged folder with the NDK toolchain, ANDROID_ABI, ANDROID_PLATFORM=android-23,
-ANDROID_STL=c++_shared, GEODE_TARGET_PLATFORM=Android64 or Android32,
-LSF_TARGET_GD=2.2091 and LSF_ACKNOWLEDGE_EXPERIMENTAL=ON.
-The bundled manual GitHub Actions workflow expresses all six target combinations.
-It has not been executed here and does not publish releases.
-
-## Checks
+Checks:
 
 ```text
 node tools/check-source.mjs
@@ -96,27 +90,5 @@ cmake --build build-math
 ctest --test-dir build-math --output-on-failure
 ```
 
-The Node audit checks field names and Windows hook availability against the
-bundled declarations. It cannot prove ABI compatibility or rendering correctness.
-The C++ math tests exercise invalid dimensions, extreme pixelation and nested
-state restoration. They require a C++ compiler.
-
-## Runtime testing still required
-
-See TESTING.md. The visit-scope substitution is the principal behavioral risk:
-it holds zero camera rotation and remapped pixelation for longer than the
-original prepareTargetContainer hook. Shader updates or other render mods may
-observe these temporary values. Newer native shader calculations also use
-screenSize/aspect/scale fields absent from the original mod, so effect parity
-must be checked rather than assumed.
-
-The existence of the old performance bug on 2.209/2.2091 is not yet established.
-Measure vanilla/native rendering before claiming that this port fixes a current
-regression. Native-resolution rendering can cost more than the original target
-on high-resolution displays. No FPS improvement is claimed.
-
-Android background/foreground GL context restoration and framebuffer/NPOT UV
-behavior need physical-device tests. The retained upstream shader may also
-differ from newer game effects. Do not describe this as a finished port.
-
-Original author, source pins and redistribution status: THIRD_PARTY.md.
+The Node audit checks field names and hook addresses, not ABI or runtime safety.
+Original author, source pins and upstream licensing status: THIRD_PARTY.md.

@@ -20,10 +20,11 @@
     ]
   },
   "verification": {
-    "source_audit": "passed: 109 field names and 3 Windows hook addresses present in each of 2.209 and 2.2091; not an ABI or compilation check",
-    "cpp_compilation": "2.2081 CMake configuration attempted on 2026-10-20; failed: No CMAKE_CXX_COMPILER could be found; no compilation or linking occurred",
+    "source_audit": "passed for 2.2081, 2.209 and 2.2091",
+    "cpp_compilation": "GitHub Actions 39372958420: 2.2081 Android32 and Android64 passed; Win64 pending. All 2.209/2.2091 profiles blocked by SDK Cocos interfaces.",
     "runtime_windows": "not run",
     "runtime_android32": "not run",
-    "runtime_android64": "not run"
+    "runtime_android64": "not run",
+    "cpp_math_tests": "passed in GitHub Actions"
   }
 }

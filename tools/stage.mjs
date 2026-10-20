@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const gd = process.argv[2] ?? '2.2091';
+const gd = process.argv[2] ?? '2.2081';
 if (!['2.2081', '2.209', '2.2091'].includes(gd)) throw new Error('Unsupported GD profile: ' + gd);
 const dest = path.join(root, '.staging', gd);
 // Copy a fixed list. Never recursively copy .staging into itself.

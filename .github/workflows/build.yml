@@ -3,6 +3,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      gd:
+        description: 'GD profile (2.209+ requires a compatible newer SDK)'
+        type: choice
+        default: '2.2081'
+        options: ['2.2081', '2.209', '2.2091']
 permissions:
   contents: read
 jobs:
@@ -18,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        gd: ['2.2081', '2.209', '2.2091']
+        gd: ["${{ inputs.gd || '2.2081' }}"]
         target: [Win64, Android32, Android64]
     runs-on: ${{ matrix.target == 'Win64' && 'windows-latest' || 'ubuntu-latest' }}
     steps:
@@ -28,7 +34,7 @@ jobs:
           node-version: '22'
       - run: node tools/check-source.mjs
       - run: node tools/stage.mjs ${{ matrix.gd }}
-      - uses: geode-sdk/build-geode-mod@main
+      - uses: geode-sdk/build-geode-mod@a0f7676e6fcd1a584f6d0c1c800239008412defc
         id: build
         with:
           sdk: '5.11.2'

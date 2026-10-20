@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('2.2081','2.209','2.2091')][string]$GameVersion = '2.2091',
+    [ValidateSet('2.2081','2.209','2.2091')][string]$GameVersion = '2.2081',
     [ValidateSet('Win64','Android32','Android64')][string]$Target = 'Win64',
     [string]$AndroidNdk = $env:ANDROID_NDK_HOME,
     [string]$BindingsPath = $env:GEODE_BINDINGS_REPO_PATH
